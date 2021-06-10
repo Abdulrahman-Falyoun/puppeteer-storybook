@@ -2,6 +2,7 @@ import * as puppeteer from 'puppeteer';
 import * as minimist from 'minimist';
 import {config} from 'dotenv';
 import {authPuppeteer} from './authentication';
+import {SharePoints} from "./share-points-names";
 
 interface IArgs {
     headless?: boolean;
@@ -9,11 +10,15 @@ interface IArgs {
     scenarios?: string;
     executablePath?: string;
     removeJS?: boolean;
+    website?: string;
 }
 
 config(); // parse local .env if any
-const {headless, configPath, executablePath, removeJS} = minimist(process.argv.slice(2)) as IArgs;
+const {headless, configPath, executablePath, removeJS, website} = minimist(process.argv.slice(2)) as IArgs;
 
+if (!website || SharePoints.indexOf(website) === -1) {
+    throw new Error(`Website's name is required and it should be one of the values [${SharePoints}]`)
+}
 (async () => {
 
     // Optional window and viewport dimensions config
@@ -44,7 +49,7 @@ const {headless, configPath, executablePath, removeJS} = minimist(process.argv.s
             try {
                 console.log('running ', runPath);
                 const {run} = await import(`./test-cases/${runPath}`);
-                await run(page, siteUrl, JSON.parse(removeJS as any));
+                await run(page, siteUrl, website, JSON.parse(removeJS as any));
             } catch (ex) {
                 console.log(`Error: ${ex.message}`);
             }

@@ -2,15 +2,23 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {Page} from 'puppeteer-core';
 import {removeJavascriptFromHTML} from "../scripts-remover";
+import {createDirectoryIfItDoesNotExist} from "../../utils";
 
 
-export const run = async (page: Page, siteUrl: string, removeJS: boolean = false): Promise<void> => {
+export const run = async (page: Page, siteUrl: string, website: string, removeJS: boolean = false): Promise<void> => {
     // Create site page screenshot
-    const requestSharePoint = siteUrl.split("/")[siteUrl.split("/").length - 1].replace(/(:|\.)/g, '_');
-    const dir = `./public/snapshots/${requestSharePoint}`;
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {recursive: true});
-    }
+    // const requestSharePoint = siteUrl.split("/")[siteUrl.split("/").length - 1].replace(/(:|\.)/g, '_');
+    const dir = `./public/snapshots/${website}`;
+    const htmlDir = `${dir}/html`;
+    const styleDir = `${dir}/style`;
+    const assetsDir = `${dir}/assets`;
+    const jsStories = `${dir}/js-stories`;
+    // Creating directories
+    createDirectoryIfItDoesNotExist(dir);
+    createDirectoryIfItDoesNotExist(htmlDir);
+    createDirectoryIfItDoesNotExist(styleDir);
+    createDirectoryIfItDoesNotExist(assetsDir);
+    createDirectoryIfItDoesNotExist(jsStories);
 
     await page.exposeFunction('captureSnapshot', async (data: any) => {
         console.log('data [sharepoints/test-cases/html.ts]: ', data);
@@ -22,29 +30,29 @@ export const run = async (page: Page, siteUrl: string, removeJS: boolean = false
             content = removeJavascriptFromHTML(html) || content;
         }
         const filename = new Date().toISOString().replace(/(:|\.)/g, '_');
-        fs.writeFileSync(path.join(dir, `${filename}.html`), content)
+        fs.writeFileSync(path.join(htmlDir, `${filename}.html`), content)
 
         const jsContent = `
-        export const createWiki = (args) => {
+        export const createStoryFor${website} = (args) => {
             return \`${html}\`
             
         }`;
-        fs.writeFileSync('snapshot.js', jsContent);
+        fs.writeFileSync(path.join(jsStories, `${filename}.js`), jsContent);
 
-        const sbContent = `
-        const createWiki = (args) => {
-            return \`${html}\`
-        }
-        export default {
-            title: 'Example/Wiki',
-            argTypes: {
-            },
-        };
-        const Template = (args) => createWiki(args);
-        export const wikiPage = Template.bind({});
-        wikiPage.args = {...{a: '2', b: '3'}};
-        `
-        fs.writeFileSync('C:\\dev\\shortpoint\\storybook\\stories\\sbContent.stories.js', sbContent);
+        // const sbContent = `
+        // const createWiki = (args) => {
+        //     return \`${html}\`
+        // }
+        // export default {
+        //     title: 'Example/Wiki',
+        //     argTypes: {
+        //     },
+        // };
+        // const Template = (args) => createWiki(args);
+        // export const wikiPage = Template.bind({});
+        // wikiPage.args = {...{a: '2', b: '3'}};
+        // `
+        // fs.writeFileSync('C:\\dev\\shortpoint\\storybook\\stories\\sbContent.stories.js', sbContent);
 
     });
 

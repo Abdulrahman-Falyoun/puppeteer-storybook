@@ -1,5 +1,6 @@
 import './page.css';
 import { createHeader } from './Header';
+import {createStoryForwiki} from "../public/snapshots/wiki/js-stories/2021-06-10T19_29_55_050Z";
 
 export const createPage = ({ user, onLogout, onLogin, onCreateAccount }) => {
   const article = document.createElement('article');
@@ -62,6 +63,12 @@ export const createPage = ({ user, onLogout, onLogin, onCreateAccount }) => {
 `;
 
   article.insertAdjacentHTML('beforeend', section);
+  article.insertAdjacentHTML('beforeend', section);
+  const wiki = createStoryForwiki({});
+  const divWIki = document.createElement("div");
+  divWIki.innerHTML = wiki;
+  article.insertAdjacentElement('afterbegin', divWIki);
+  article.insertAdjacentHTML('afterbegin', section);
 
   return article;
 };
