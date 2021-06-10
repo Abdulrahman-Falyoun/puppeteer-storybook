@@ -1,0 +1,32 @@
+<!--<base href="/">-->
+<!--<link rel="stylesheet"  href="style1.css"/>-->
+<!--<link rel="stylesheet"  href="style2.css"/>-->
+<!--<link rel="stylesheet"   href="style3.css"/>-->
+<script>
+    console.log('HI THERE')
+</script
+><!-- shortpoint style loader -->
+<script type="text/javascript">
+    window.SHORTPOINT_VERSION_KEY = 'shortpoint-storybook-version';
+    window.version = localStorage.getItem(window.SHORTPOINT_VERSION_KEY) || '7.2.2.4';
+
+    function loadScript(src, callback, appendTo) {
+        appendTo = appendTo || 'body';
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = src;
+        script.onload = callback || function() {};
+        document.body.appendChild(script);
+    }
+
+    function loadStyle(href, callback, appendTo) {
+        appendTo = appendTo || 'head';
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = href;
+        link.onload = callback || function() {};
+        document.head.appendChild(link);
+    }
+
+</script>
