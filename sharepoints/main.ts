@@ -3,6 +3,8 @@ import * as minimist from 'minimist';
 import {config} from 'dotenv';
 import {authPuppeteer} from './authentication';
 import {SharePointsNames} from "./share-points-names";
+import * as fs from 'fs';
+import {SNAPSHOTS_DIRECTORY} from "../constants";
 
 interface IArgs {
     headless?: boolean;
@@ -64,14 +66,19 @@ const takeSnapshot = async () => {
     }
 }
 
-
+const consumeAlreadySnapshot = (website: typeof SharePointsNames[number]) => {
+    const dir = `${SNAPSHOTS_DIRECTORY}/${website}/js-stories/`;
+    const files = fs.readdirSync(dir);
+    const sortedFiles = files.sort((a, b) => fs.statSync(dir + a).mtime.getTime() - fs.statSync(dir + b).mtime.getTime());
+    console.log(sortedFiles);
+}
 (async () => {
 
     console.time('Execution time');
     if (JSON.parse(snapshot as any) === true) {
         await takeSnapshot();
     } else {
-
+        consumeAlreadySnapshot(website);
     }
     console.timeEnd('Execution time');
 })()

@@ -9,7 +9,8 @@
     "build-storybook": "build-storybook",
     "take-snapshot": "ts-node sharepoints/main.ts",
     "take-snapshot-interactivly": "ts-node sharepoints/interactive.ts",
-    "new-snapshot-no-js": "ts-node sharepoints/main.ts --headless false --removeJS true --snapshot true --website wiki"
+    "new-snapshot-no-js": "ts-node sharepoints/main.ts --headless false --removeJS true --snapshot true --website wiki",
+    "consume-snapshot": "ts-node sharepoints/main.ts --snapshot false --website wiki"
   },
   "keywords": [],
   "author": "",
