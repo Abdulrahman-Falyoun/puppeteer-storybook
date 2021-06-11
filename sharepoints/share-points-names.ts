@@ -1,1 +1,1 @@
-export const SharePoints = ['wiki', 'freelancing'];
+export const SharePointsNames = ['wiki', 'freelancing'] as const;

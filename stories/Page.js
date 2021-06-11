@@ -1,13 +1,12 @@
 import './page.css';
-import { createHeader } from './Header';
-import {createStoryForwiki} from "../public/snapshots/wiki/js-stories/2021-06-10T19_29_55_050Z";
+import {createHeader} from './Header';
 
-export const createPage = ({ user, onLogout, onLogin, onCreateAccount }) => {
-  const article = document.createElement('article');
+export const createPage = ({user, onLogout, onLogin, onCreateAccount, sharePointTemplate}) => {
+    const article = document.createElement('article');
 
-  const header = createHeader({ onLogin, onLogout, onCreateAccount, user });
-  article.appendChild(header);
-  const section = `
+    const header = createHeader({onLogin, onLogout, onCreateAccount, user});
+    article.appendChild(header);
+    const section = `
   <section>
     <h2>Pages in Storybook</h2>
     <p>
@@ -61,14 +60,8 @@ export const createPage = ({ user, onLogout, onLogin, onCreateAccount }) => {
     </div>
   </section>
 `;
+    article.insertAdjacentHTML('afterbegin', sharePointTemplate);
+    article.insertAdjacentHTML('afterbegin', section);
 
-  article.insertAdjacentHTML('beforeend', section);
-  article.insertAdjacentHTML('beforeend', section);
-  const wiki = createStoryForwiki({});
-  const divWIki = document.createElement("div");
-  divWIki.innerHTML = wiki;
-  article.insertAdjacentElement('afterbegin', divWIki);
-  article.insertAdjacentHTML('afterbegin', section);
-
-  return article;
+    return article;
 };

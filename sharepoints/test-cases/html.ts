@@ -3,12 +3,13 @@ import * as path from 'path';
 import {Page} from 'puppeteer-core';
 import {removeJavascriptFromHTML} from "../scripts-remover";
 import {createDirectoryIfItDoesNotExist} from "../../utils";
+import {SNAPSHOTS_DIRECTORY} from "../../constants";
 
 
 export const run = async (page: Page, siteUrl: string, website: string, removeJS: boolean = false): Promise<void> => {
     // Create site page screenshot
     // const requestSharePoint = siteUrl.split("/")[siteUrl.split("/").length - 1].replace(/(:|\.)/g, '_');
-    const dir = `./public/snapshots/${website}`;
+    const dir = `${SNAPSHOTS_DIRECTORY}/${website}`;
     const htmlDir = `${dir}/html`;
     const styleDir = `${dir}/style`;
     const assetsDir = `${dir}/assets`;
@@ -29,16 +30,23 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
         if (removeJS) {
             content = removeJavascriptFromHTML(html) || content;
         }
-        const filename = new Date().toISOString().replace(/(:|\.)/g, '_');
+        const filename = new Date().toISOString().replace(/:/g, '$').replace(/\./g, '_');
         fs.writeFileSync(path.join(htmlDir, `${filename}.html`), content)
 
         const jsContent = `
-        export const createStoryFor${website} = (args) => {
+        export const getTemplate = (args) => {
             return \`${html}\`
             
         }`;
         fs.writeFileSync(path.join(jsStories, `${filename}.js`), jsContent);
-
+        console.log(`💪 🔥 🎉 Hi developer you can get the template if you use the following link
+        \n\n=======================================================================================\n
+        ${
+            path.join(jsStories, `${filename}.js`)
+        }
+        Inside loader:
+        loaders: [async () => ({Component: await import('PATH_TO_PUBLIC/${path.join(jsStories, `${filename}.js`)}')})],
+        \n\n=======================================================================================\n`);
         // const sbContent = `
         // const createWiki = (args) => {
         //     return \`${html}\`
@@ -58,7 +66,7 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
 
     await page.evaluate(() => {
         window.addEventListener('takeSnapshot', (dd) => {
-            console.log('dd: ', dd);
+            console.log('Thrown data for event (takeSnapshot): ', dd);
             try {
                 (window as any).captureSnapshot({a: 'whatever'});
 
