@@ -5,7 +5,27 @@ import {removeJavascriptFromHTML} from "../scripts-remover";
 import {createDirectoryIfItDoesNotExist} from "../../utils";
 import {SNAPSHOTS_DIRECTORY} from "../../constants";
 
+const extractCSS = async (page: Page) => {
+    return await page
+        .evaluate(() => {
+            return Array.from(document.styleSheets)
+                .filter((styleSheet: CSSStyleSheet) => {
+                    if (!styleSheet.href) {
+                        return true;
+                    }
+                    return styleSheet.href.indexOf(window.location.origin) === 0;
+                })
+                .map((styleSheet: CSSStyleSheet) => {
+                    const rules = Array.from(styleSheet.cssRules);
+                    const cssContent = rules.map(rule => rule.cssText).join("\n");
 
+                    return {
+                        content: cssContent,
+                        name: Date.now().toString(36) + Math.random().toString(36).substr(2)
+                    }
+                })
+        });
+}
 export const run = async (page: Page, siteUrl: string, website: string, removeJS: boolean = false): Promise<void> => {
     // Create site page screenshot
     // const requestSharePoint = siteUrl.split("/")[siteUrl.split("/").length - 1].replace(/(:|\.)/g, '_');
@@ -23,8 +43,18 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
 
     await page.exposeFunction('captureSnapshot', async (data: any) => {
         console.log('data [sharepoints/test-cases/html.ts]: ', data);
-        const html = await page.content();
 
+        const cssData = await extractCSS(page);
+        for (let i = 0; i < cssData.length; i++) {
+            const {content, name} = cssData[i];
+            // fs.writeFileSync(`snap/${name}.css`, content);
+            await page.addStyleTag({
+                content,
+                // path: `snap/${name}.css`
+            })
+        }
+
+        const html = await page.content();
 
         let content: string = html;
         if (removeJS) {
@@ -35,7 +65,7 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
 
         const jsContent = `
         export const getTemplate = (args) => {
-            return \`${html}\`
+            return \`${content}\`
             
         }`;
         fs.writeFileSync(path.join(jsStories, `${filename}.js`), jsContent);

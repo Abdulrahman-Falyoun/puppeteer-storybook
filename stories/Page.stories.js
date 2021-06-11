@@ -3,7 +3,7 @@ import * as HeaderStories from './Header.stories';
 
 export default {
     title: 'Example/Page',
-    loaders: [async () => ({SharePointTemplate: await import('../public/snapshots/wiki/js-stories/2021-06-11T12$06$58_559Z.js')})],
+    loaders: [async () => ({SharePointTemplate: await import('../public/snapshots/blank/js-stories/2021-06-11T18$43$09_871Z.js')})],
 };
 
 export const Template = (args, {loaded}) => {

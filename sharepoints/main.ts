@@ -69,8 +69,39 @@ const takeSnapshot = async () => {
 const consumeAlreadySnapshot = (website: typeof SharePointsNames[number]) => {
     const dir = `${SNAPSHOTS_DIRECTORY}/${website}/js-stories/`;
     const files = fs.readdirSync(dir);
-    const sortedFiles = files.sort((a, b) => fs.statSync(dir + a).mtime.getTime() - fs.statSync(dir + b).mtime.getTime());
-    console.log(sortedFiles);
+    const sortedFiles = files.sort((a, b) => fs.statSync(dir + b).mtime.getTime() - fs.statSync(dir + a).mtime.getTime());
+    const response = sortedFiles.map(file => {
+        const parseFileNameToString = file.substr(0, file.indexOf(".")).replace(/\$/g, ':').replace(/_/g, '.');
+        const loader = `async () => ({SharePointTemplate: await import('/${SNAPSHOTS_DIRECTORY}/${website}/js-stories/${file}')})`;
+        return {
+            snapshot: file,
+            website,
+            date: new Date(parseFileNameToString).toLocaleString(),
+            loader,
+
+        }
+    })
+    console.log("\n======================================================================\n\n");
+    console.table(response, [
+        'snapshot',
+        'website',
+        'date',
+        'loader'
+    ]);
+    console.log("Usage: ")
+    console.log(`
+        export default {
+            title: 'Example/SomeStorybook',
+            loaders: [loader goes here],
+        };
+        export const Template = (args, {loaded}) => {
+            const sharePointTemplate = loaded.SharePointTemplate.getTemplate({});
+            console.log('sharePointTemplate: ', sharePointTemplate);
+            return sharePointTemplate;
+        };`
+    )
+    console.log("\n======================================================================\n\n");
+
 }
 (async () => {
 
