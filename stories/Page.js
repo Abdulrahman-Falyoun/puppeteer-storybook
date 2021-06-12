@@ -3,7 +3,8 @@ import {createHeader} from './Header';
 
 export const createPage = ({user, onLogout, onLogin, onCreateAccount, sharePointTemplate}) => {
     const article = document.createElement('article');
-
+    article.style.overflow = 'scroll';
+    article.style.height = '100vh';
     const header = createHeader({onLogin, onLogout, onCreateAccount, user});
     article.appendChild(header);
     const section = `

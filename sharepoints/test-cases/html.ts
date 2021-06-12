@@ -47,13 +47,17 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
         const cssData = await extractCSS(page);
         for (let i = 0; i < cssData.length; i++) {
             const {content, name} = cssData[i];
-            // fs.writeFileSync(`snap/${name}.css`, content);
-            await page.addStyleTag({
-                content,
-                // path: `snap/${name}.css`
-            })
+           try {
+               // fs.writeFileSync(`${styleDir}/${name}.css`, content);
+               await page.addStyleTag({
+                    content,
+                   // path: `/snapshots/${website}/style/${name}.css`
+               })
+           } catch (e) {
+               console.error('Error [html.ts]: ', e);
+           }
         }
-
+        console.log('css written successfully')
         const html = await page.content();
 
         let content: string = html;
@@ -66,10 +70,9 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
         const jsContent = `
         export const getTemplate = (args) => {
             return \`${content}\`
-            
         }`;
         fs.writeFileSync(path.join(jsStories, `${filename}.js`), jsContent);
-        console.log(`💪 🔥 🎉 Hi developer you can get the template if you use the following link
+        console.log(`Hi developer you can get the template if you use the following link
         \n\n=======================================================================================\n
         ${
             path.join(jsStories, `${filename}.js`)

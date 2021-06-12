@@ -1,20 +1,31 @@
 import {createPage} from './Page';
 import * as HeaderStories from './Header.stories';
+import {injectHTML} from "../sharepoints/inject-html";
 
 export default {
     title: 'Example/Page',
-    loaders: [async () => ({SharePointTemplate: await import('../public/snapshots/blank/js-stories/2021-06-11T18$43$09_871Z.js')})],
+    argTypes: {
+        selector: {control: 'text'},
+        contentToInject: {control: 'text'},
+    },
+    loaders: [async () => ({SharePointTemplate: await import('../public/snapshots/blank/js-stories/2021-06-12T08$25$37_969Z.js')})],
 };
 
 export const Template = (args, {loaded}) => {
+    console.log('args: ', args);
     const sharePointTemplate = loaded.SharePointTemplate.getTemplate({});
-    return createPage({...args, sharePointTemplate});
+    if (("selector" in args) && ("contentToInject" in args)) {
+        const content = injectHTML(sharePointTemplate, args.selector, args.contentToInject);
+        return createPage({...args, sharePointTemplate: content});
+    } else {
+        return createPage({...args, sharePointTemplate});
+    }
 };
 
-// export const LoggedIn = Template.bind({});
-// LoggedIn.args = {
-//   ...HeaderStories.LoggedIn.args,
-// };
+export const LoggedIn = Template.bind({});
+LoggedIn.args = {
+    ...HeaderStories.LoggedIn.args,
+};
 //
 // export const LoggedOut = Template.bind({});
 // LoggedOut.args = {
