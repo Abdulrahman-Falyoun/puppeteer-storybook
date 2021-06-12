@@ -46,14 +46,12 @@ const takeSnapshot = async () => {
 
     console.log('browser launched')
     try {
-
-
         const runScenarios = ['html'];
         for (const runPath of runScenarios) {
             try {
                 console.log('running ', runPath);
                 const {run} = await import(`./test-cases/${runPath}`);
-                await run(page, siteUrl, website, JSON.parse(removeJS as any));
+                await run(page, siteUrl, website, JSON.parse(removeJS as any), JSON.parse(headless as any));
             } catch (ex) {
                 console.log(`Error: ${ex.message}`);
             }
