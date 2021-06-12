@@ -32,7 +32,7 @@ const takeSnapshot = async () => {
         headless: headless ? JSON.parse(headless as any) : false,
         args: [`--window-size=${width},${height}`],
         timeout: 0,
-        executablePath: executablePath || 'C:\\Users\\JS\\Downloads\\chrome-win\\chrome.exe'
+        executablePath: executablePath || process.env.CHROMIUM_PATH
     });
 
     const page = await browser.newPage();

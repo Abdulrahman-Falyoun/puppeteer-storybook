@@ -124,15 +124,12 @@ export const run = async (page: Page, siteUrl: string, website: string, removeJS
 
 
     await page.evaluate(() => {
-        const snapshotBtn = "<button style= id='snapshotBtn' class='snapshot-btn' onclick='foo()'>capture snapchat</button>";
         const body = document.getElementsByTagName('body')[0];
         const btn = document.createElement('button');
         btn.id = 'snapshotBtn';
         btn.setAttribute('onclick', 'foo()');
         btn.innerText = 'capture';
         btn.style.cssText = 'position: absolute; color: white; text-align: center; right: 0; width: 60px; height: 60px; z-index: 5000000000; top: 0; background-color: #0C9;border-radius:50px;';
-        // btn.innerHTML = snapshotBtn;
         body.appendChild(btn);
-        // body.innerHTML = snapshotBtn + body.innerHTML;
     })
 };
