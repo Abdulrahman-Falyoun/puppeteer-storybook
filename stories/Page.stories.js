@@ -8,7 +8,7 @@ export default {
         selector: {control: 'text'},
         contentToInject: {control: 'text'},
     },
-    loaders: [async () => ({SharePointTemplate: await import('../public/snapshots/blank/js-stories/2021-06-12T08$25$37_969Z.js')})],
+    loaders: [async () => ({SharePointTemplate: await import('../public/snapshots/blank/js-stories/2021-06-12T09$42$28_614Z.js')})],
 };
 
 export const Template = (args, {loaded}) => {

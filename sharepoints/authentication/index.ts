@@ -1,11 +1,16 @@
 import {Page} from 'puppeteer';
 import {getAuth, IOnpremiseUserCredentials} from 'node-sp-auth';
 import {AuthConfig, IAuthConfigSettings, IAuthContext} from 'node-sp-auth-config';
+import {SharePointsUrls, SharePointsNames} from "../share-points-names";
 
-export const authPuppeteer = async (page: Page, configPath: string = './config/private.json', headlessMode: boolean = false): Promise<string> => {
+export const authPuppeteer = async (
+    page: Page,
+    website: typeof SharePointsNames[number],
+    configPath: string = './config/private.json',
+    headlessMode: boolean = false): Promise<string> => {
     const authConfig: IAuthConfigSettings = {configPath, headlessMode};
     const authContext: IAuthContext = await new AuthConfig(authConfig).getContext();
-
+    authContext.siteUrl = SharePointsUrls[website];
     // OnpremiseUserCredentials == NTML can't operate with cookies
     if (authContext.strategy !== 'OnpremiseUserCredentials') {
 

@@ -36,7 +36,7 @@ const takeSnapshot = async () => {
     });
 
     const page = await browser.newPage();
-    const siteUrl = await authPuppeteer(page, configPath);
+    const siteUrl = await authPuppeteer(page, website, configPath);
 
     await page.setViewport({width, height});
     await page.goto(siteUrl, {
